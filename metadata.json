@@ -1,0 +1,6 @@
+{
+  "name": "Content Operations - Live Class Monitoring Dashboard",
+  "description": "Real-time, day-wise monitoring and operational compliance tracker for educational content development, linked directly to live Google Sheets.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
