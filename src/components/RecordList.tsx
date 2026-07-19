@@ -106,37 +106,33 @@ export default function RecordList({ records, isLoading, isCompact = false }: Re
             </select>
           </div>
 
-          {!isCompact && (
-            <>
-              <div className="h-4 w-px bg-slate-800 mx-1 hidden sm:block" />
+          <div className="h-4 w-px bg-slate-800 mx-1" />
 
-              {/* Grid vs Table view toggle */}
-              <div className="bg-slate-950/50 p-0.5 rounded-lg flex gap-0.5 border border-slate-800/80">
-                <button
-                  onClick={() => setViewMode("grid")}
-                  className={`p-1.5 rounded-md transition-all ${
-                    viewMode === "grid"
-                      ? "bg-indigo-600/90 text-white shadow-md"
-                      : "text-slate-400 hover:text-slate-200"
-                  }`}
-                  title="Detailed Cards (Bento)"
-                >
-                  <Grid className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setViewMode("table")}
-                  className={`p-1.5 rounded-md transition-all ${
-                    viewMode === "table"
-                      ? "bg-indigo-600/90 text-white shadow-md"
-                      : "text-slate-400 hover:text-slate-200"
-                  }`}
-                  title="Compact Spreadsheet View"
-                >
-                  <Columns className="w-4 h-4" />
-                </button>
-              </div>
-            </>
-          )}
+          {/* Grid vs Table view toggle */}
+          <div className="bg-slate-950/50 p-0.5 rounded-lg flex gap-0.5 border border-slate-800/80">
+            <button
+              onClick={() => setViewMode("grid")}
+              className={`rounded-md transition-all ${isCompact ? "p-1" : "p-1.5"} ${
+                viewMode === "grid"
+                  ? "bg-indigo-600/90 text-white shadow-md"
+                  : "text-slate-400 hover:text-slate-200"
+              }`}
+              title="Detailed Cards (Bento)"
+            >
+              <Grid className={isCompact ? "w-3 h-3" : "w-4 h-4"} />
+            </button>
+            <button
+              onClick={() => setViewMode("table")}
+              className={`rounded-md transition-all ${isCompact ? "p-1" : "p-1.5"} ${
+                viewMode === "table"
+                  ? "bg-indigo-600/90 text-white shadow-md"
+                  : "text-slate-400 hover:text-slate-200"
+              }`}
+              title="Compact Spreadsheet View"
+            >
+              <Columns className={isCompact ? "w-3 h-3" : "w-4 h-4"} />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -309,37 +305,37 @@ export default function RecordList({ records, isLoading, isCompact = false }: Re
       ) : (
         /* RENDER MODE: COMPACT SPREADSHEET TABLE (Pinning left side, scrollable focus columns) */
         <div className="bg-slate-900/30 backdrop-blur-xs rounded-2xl border border-slate-800 overflow-hidden shadow-2xl" id="records-table-view">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-800">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-slate-900 border-b border-slate-800">
                   {/* Identification Panel Headers (Pinned left-ish style) */}
-                  <th className="p-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider bg-slate-900 sticky left-0 z-10 border-r border-slate-800">
+                  <th className={`${isCompact ? "px-2 py-1.5 text-[8.5px] min-w-[100px]" : "p-3.5 text-xs"} font-bold text-slate-300 uppercase tracking-wider bg-slate-900 sticky left-0 z-10 border-r border-slate-800`}>
                     Left ID Panel (Date & Course)
                   </th>
-                  <th className="p-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider border-r border-slate-800">
+                  <th className={`${isCompact ? "px-2 py-1.5 text-[8.5px] min-w-[100px]" : "p-3.5 text-xs"} font-bold text-slate-300 uppercase tracking-wider border-r border-slate-800`}>
                     Subject & Topic
                   </th>
                   {/* Focus columns */}
-                  <th className="p-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider min-w-[120px]">
+                  <th className={`${isCompact ? "px-2 py-1.5 text-[8.5px] min-w-[70px]" : "p-3.5 text-xs min-w-[120px]"} font-bold text-slate-300 uppercase tracking-wider`}>
                     Studio
                   </th>
-                  <th className="p-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider min-w-[150px]">
+                  <th className={`${isCompact ? "px-2 py-1.5 text-[8.5px] min-w-[80px]" : "p-3.5 text-xs min-w-[150px]"} font-bold text-slate-300 uppercase tracking-wider`}>
                     Coordinator
                   </th>
-                  <th className="p-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider min-w-[120px]">
+                  <th className={`${isCompact ? "px-2 py-1.5 text-[8.5px] min-w-[70px]" : "p-3.5 text-xs min-w-[120px]"} font-bold text-slate-300 uppercase tracking-wider`}>
                     Lecture Slide
                   </th>
-                  <th className="p-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider min-w-[130px]">
+                  <th className={`${isCompact ? "px-2 py-1.5 text-[8.5px] min-w-[70px]" : "p-3.5 text-xs min-w-[130px]"} font-bold text-slate-300 uppercase tracking-wider`}>
                     Title
                   </th>
-                  <th className="p-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider min-w-[150px]">
+                  <th className={`${isCompact ? "px-2 py-1.5 text-[8.5px] min-w-[70px]" : "p-3.5 text-xs min-w-[150px]"} font-bold text-slate-300 uppercase tracking-wider`}>
                     Caption
                   </th>
-                  <th className="p-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider min-w-[120px]">
+                  <th className={`${isCompact ? "px-2 py-1.5 text-[8.5px] min-w-[85px]" : "p-3.5 text-xs min-w-[120px]"} font-bold text-slate-300 uppercase tracking-wider`}>
                     Source Platform
                   </th>
-                  <th className="p-3.5 text-xs font-bold text-slate-300 uppercase tracking-wider text-center min-w-[190px]">
+                  <th className={`${isCompact ? "px-2 py-1.5 text-[8.5px] min-w-[95px]" : "p-3.5 text-xs min-w-[190px]"} font-bold text-slate-300 uppercase tracking-wider text-center`}>
                     Status
                   </th>
                 </tr>
@@ -348,18 +344,18 @@ export default function RecordList({ records, isLoading, isCompact = false }: Re
                 {currentRecords.map((record) => (
                   <tr key={record.id} className="hover:bg-slate-800/20 transition-colors">
                     {/* ID Column */}
-                    <td className="p-3 bg-slate-950 sticky left-0 z-10 border-r border-slate-850 min-w-[180px]">
-                      <div className="text-slate-100 font-semibold text-xs leading-tight">
+                    <td className={`${isCompact ? "px-2 py-1 min-w-[100px]" : "p-3 min-w-[180px]"} bg-slate-950 sticky left-0 z-10 border-r border-slate-850`}>
+                      <div className={`text-slate-100 font-semibold leading-tight ${isCompact ? "text-[9px]" : "text-xs"}`}>
                         {record.course}
                       </div>
-                      <div className="text-[10px] text-slate-400 font-mono mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5">
-                        <span className="flex items-center gap-1 shrink-0">
-                          <Calendar className="w-3 h-3 text-slate-555" />
+                      <div className={`${isCompact ? "text-[7.5px]" : "text-[10px]"} text-slate-400 font-mono mt-0.5 flex flex-wrap items-center gap-x-1 gap-y-0.5`}>
+                        <span className="flex items-center gap-0.5 shrink-0">
+                          <Calendar className={`${isCompact ? "w-2.5 h-2.5" : "w-3 h-3"} text-slate-555`} />
                           {record.dateTime}
                         </span>
                         {record.classTime && (
-                          <span className="flex items-center gap-1 text-indigo-400 font-bold shrink-0">
-                            <Clock className="w-3.5 h-3.5 text-indigo-500" />
+                          <span className="flex items-center gap-0.5 text-indigo-400 font-bold shrink-0">
+                            <Clock className={`${isCompact ? "w-2.5 h-2.5" : "w-3.5 h-3.5"} text-indigo-500`} />
                             {record.classTime}
                           </span>
                         )}
@@ -367,114 +363,114 @@ export default function RecordList({ records, isLoading, isCompact = false }: Re
                     </td>
 
                     {/* Subject/Topic */}
-                    <td className="p-3 border-r border-slate-850 min-w-[180px]">
-                      <div className="text-slate-100 font-bold text-xs">
+                    <td className={`${isCompact ? "px-2 py-1 min-w-[100px]" : "p-3 min-w-[180px]"} border-r border-slate-850`}>
+                      <div className={`text-slate-100 font-bold leading-tight ${isCompact ? "text-[9px]" : "text-xs"}`}>
                         {record.subject}
                       </div>
-                      <div className="text-slate-400 text-xs line-clamp-1 mt-0.5">
+                      <div className={`text-slate-400 mt-0.5 line-clamp-1 ${isCompact ? "text-[8px]" : "text-xs"}`}>
                         {record.topic}
                       </div>
                     </td>
 
                     {/* Studio (Focus M) */}
-                    <td className="p-3 border-r border-slate-850 min-w-[140px]">
+                    <td className={`${isCompact ? "px-2 py-1 min-w-[70px]" : "p-3 min-w-[140px]"} border-r border-slate-850`}>
                       {record.completeness.studio ? (
-                        <button className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 shadow-xs transition-all text-left w-max max-w-full">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <button className={`inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 shadow-xs transition-all text-left w-max max-w-full ${isCompact ? "text-[8px]" : "text-[11px]"}`}>
+                          <CheckCircle2 className={`${isCompact ? "w-2.5 h-2.5" : "w-3.5 h-3.5"} text-emerald-400 shrink-0`} />
                           <span className="line-clamp-1">{record.studio}</span>
                         </button>
                       ) : (
-                        <button className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 shadow-xs transition-all w-max">
-                          <XCircle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                        <button className={`inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 shadow-xs transition-all w-max ${isCompact ? "text-[8px]" : "text-[11px]"}`}>
+                          <XCircle className={`${isCompact ? "w-2.5 h-2.5" : "w-3.5 h-3.5"} text-rose-400 shrink-0`} />
                           <span>Missing</span>
                         </button>
                       )}
                     </td>
 
                     {/* Coordinator (Focus N) */}
-                    <td className="p-3 border-r border-slate-850 min-w-[140px]">
+                    <td className={`${isCompact ? "px-2 py-1 min-w-[80px]" : "p-3 min-w-[140px]"} border-r border-slate-850`}>
                       {record.completeness.coordinator ? (
-                        <button className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 shadow-xs transition-all text-left w-max max-w-full">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <button className={`inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 shadow-xs transition-all text-left w-max max-w-full ${isCompact ? "text-[8px]" : "text-[11px]"}`}>
+                          <CheckCircle2 className={`${isCompact ? "w-2.5 h-2.5" : "w-3.5 h-3.5"} text-emerald-400 shrink-0`} />
                           <span className="line-clamp-1">{record.coordinator}</span>
                         </button>
                       ) : (
-                        <button className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 shadow-xs transition-all w-max">
-                          <XCircle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                        <button className={`inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 shadow-xs transition-all w-max ${isCompact ? "text-[8px]" : "text-[11px]"}`}>
+                          <XCircle className={`${isCompact ? "w-2.5 h-2.5" : "w-3.5 h-3.5"} text-rose-400 shrink-0`} />
                           <span>Missing</span>
                         </button>
                       )}
                     </td>
 
                     {/* Slide (Focus P) */}
-                    <td className="p-3 border-r border-slate-850 min-w-[150px]">
+                    <td className={`${isCompact ? "px-2 py-1 min-w-[70px]" : "p-3 min-w-[150px]"} border-r border-slate-850`}>
                       {record.completeness.lectureSlide ? (
-                        <button className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 shadow-xs transition-all w-max">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <button className={`inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 shadow-xs transition-all w-max ${isCompact ? "text-[8px]" : "text-[11px]"}`}>
+                          <CheckCircle2 className={`${isCompact ? "w-2.5 h-2.5" : "w-3.5 h-3.5"} text-emerald-400 shrink-0`} />
                           <span>Filled</span>
                         </button>
                       ) : (
-                        <button className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 shadow-xs transition-all w-max">
-                          <XCircle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                        <button className={`inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 shadow-xs transition-all w-max ${isCompact ? "text-[8px]" : "text-[11px]"}`}>
+                          <XCircle className={`${isCompact ? "w-2.5 h-2.5" : "w-3.5 h-3.5"} text-rose-400 shrink-0`} />
                           <span>Missing</span>
                         </button>
                       )}
                     </td>
 
                     {/* Title (Focus Q) */}
-                    <td className="p-3 border-r border-slate-850 min-w-[130px]">
+                    <td className={`${isCompact ? "px-2 py-1 min-w-[70px]" : "p-3 min-w-[130px]"} border-r border-slate-850`}>
                       {record.completeness.title ? (
-                        <button className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 shadow-xs transition-all w-max">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <button className={`inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 shadow-xs transition-all w-max ${isCompact ? "text-[8px]" : "text-[11px]"}`}>
+                          <CheckCircle2 className={`${isCompact ? "w-2.5 h-2.5" : "w-3.5 h-3.5"} text-emerald-400 shrink-0`} />
                           <span>Filled</span>
                         </button>
                       ) : (
-                        <button className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 shadow-xs transition-all w-max">
-                          <XCircle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                        <button className={`inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 shadow-xs transition-all w-max ${isCompact ? "text-[8px]" : "text-[11px]"}`}>
+                          <XCircle className={`${isCompact ? "w-2.5 h-2.5" : "w-3.5 h-3.5"} text-rose-400 shrink-0`} />
                           <span>Missing</span>
                         </button>
                       )}
                     </td>
 
                     {/* Caption (Focus R) */}
-                    <td className="p-3 border-r border-slate-850 min-w-[150px]">
+                    <td className={`${isCompact ? "px-2 py-1 min-w-[70px]" : "p-3 min-w-[150px]"} border-r border-slate-850`}>
                       {record.completeness.caption ? (
-                        <button className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 shadow-xs transition-all w-max">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <button className={`inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 shadow-xs transition-all w-max ${isCompact ? "text-[8px]" : "text-[11px]"}`}>
+                          <CheckCircle2 className={`${isCompact ? "w-2.5 h-2.5" : "w-3.5 h-3.5"} text-emerald-400 shrink-0`} />
                           <span>Filled</span>
                         </button>
                       ) : (
-                        <button className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 shadow-xs transition-all w-max">
-                          <XCircle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                        <button className={`inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 shadow-xs transition-all w-max ${isCompact ? "text-[8px]" : "text-[11px]"}`}>
+                          <XCircle className={`${isCompact ? "w-2.5 h-2.5" : "w-3.5 h-3.5"} text-rose-400 shrink-0`} />
                           <span>Missing</span>
                         </button>
                       )}
                     </td>
 
                     {/* Platform (Focus T) */}
-                    <td className="p-3 border-r border-slate-850 min-w-[140px]">
+                    <td className={`${isCompact ? "px-2 py-1 min-w-[85px]" : "p-3 min-w-[140px]"} border-r border-slate-850`}>
                       {record.completeness.sourcePlatform ? (
-                        <button className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 shadow-xs transition-all w-max">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                        <button className={`inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/20 shadow-xs transition-all w-max ${isCompact ? "text-[8px]" : "text-[11px]"}`}>
+                          <CheckCircle2 className={`${isCompact ? "w-2.5 h-2.5" : "w-3.5 h-3.5"} text-emerald-400 shrink-0`} />
                           <span>Filled</span>
                         </button>
                       ) : (
-                        <button className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 shadow-xs transition-all w-max">
-                          <XCircle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                        <button className={`inline-flex items-center gap-0.5 px-1 py-0.5 rounded-full font-semibold bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 shadow-xs transition-all w-max ${isCompact ? "text-[8px]" : "text-[11px]"}`}>
+                          <XCircle className={`${isCompact ? "w-2.5 h-2.5" : "w-3.5 h-3.5"} text-rose-400 shrink-0`} />
                           <span>Missing</span>
                         </button>
                       )}
                     </td>
 
                     {/* Overall Status */}
-                    <td className="p-3 text-center">
+                    <td className={`${isCompact ? "px-2 py-1 min-w-[95px]" : "p-3"} text-center`}>
                       {record.completeness.isComplete ? (
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 whitespace-nowrap">
-                          ✅Ready to Go LIVE
+                        <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 whitespace-nowrap ${isCompact ? "text-[8px]" : "text-[11px]"}`}>
+                          {isCompact ? "✅ Ready" : "✅Ready to Go LIVE"}
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[11px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20 whitespace-nowrap animate-blink-red">
-                          🔴 Not Ready for Live
+                        <span className={`inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20 whitespace-nowrap animate-blink-red ${isCompact ? "text-[8px]" : "text-[11px]"}`}>
+                          {isCompact ? "🔴 Incomplete" : "🔴 Not Ready"}
                         </span>
                       )}
                     </td>

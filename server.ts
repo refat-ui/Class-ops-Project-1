@@ -3,6 +3,8 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { google } from "googleapis";
 import dotenv from "dotenv";
+import fs from "fs";
+import crypto from "crypto";
 
 // Load environment variables
 dotenv.config({ override: true });
@@ -21,51 +23,72 @@ interface CacheData {
 let dataCache: CacheData | null = null;
 const CACHE_TTL_MS = 30 * 1000; // 30 seconds cache
 
-// Robust Google Service Account private key cleaner
-function cleanPrivateKey(key: string): string {
-  if (!key) return "";
+// Robust Google Service Account private key normalizer
+function normalizePrivateKey(keyStr: string): string {
+  if (!keyStr) return "";
 
-  let cleaned = key.trim();
+  try {
+    let cleaned = keyStr.trim();
+    while (
+      (cleaned.startsWith('"') && cleaned.endsWith('"')) ||
+      (cleaned.startsWith("'") && cleaned.endsWith("'"))
+    ) {
+      cleaned = cleaned.slice(1, -1).trim();
+    }
+    cleaned = cleaned.replace(/\\n/g, "\n");
+    cleaned = cleaned.replace(/\\r/g, "\r");
+    cleaned = cleaned.replace(/\\"/g, '"');
+    cleaned = cleaned.replace(/\\'/g, "'");
 
-  // 1. Remove surrounding single or double quotes repeatedly
-  while (
-    (cleaned.startsWith('"') && cleaned.endsWith('"')) ||
-    (cleaned.startsWith("'") && cleaned.endsWith("'"))
-  ) {
-    cleaned = cleaned.slice(1, -1).trim();
+    // Try standard parsing
+    try {
+      const pkey = crypto.createPrivateKey(cleaned);
+      return pkey.export({ type: "pkcs8", format: "pem" }) as string;
+    } catch (e) {
+      // Proceed to base64 DER fallback if standard parsing fails
+    }
+
+    let base64Body = cleaned
+      .replace(/-----BEGIN (?:[A-Z ]+)?PRIVATE KEY-----/, "")
+      .replace(/-----END (?:[A-Z ]+)?PRIVATE KEY-----/, "")
+      .replace(/\s+/g, "")
+      .replace(/\\n/g, "")
+      .replace(/\\r/g, "");
+
+    const derBuffer = Buffer.from(base64Body, "base64");
+    const pkey = crypto.createPrivateKey({
+      key: derBuffer,
+      format: "der",
+      type: "pkcs8"
+    });
+    return pkey.export({ type: "pkcs8", format: "pem" }) as string;
+  } catch (err) {
+    console.error("Failed to normalize private key:", err);
+    return keyStr;
   }
-
-  // 2. Unescape double-escaped newlines and carriage returns
-  cleaned = cleaned.replace(/\\n/g, "\n");
-  cleaned = cleaned.replace(/\\r/g, "\r");
-
-  // 3. Remove backslash escapes for quotes if they got double-escaped
-  cleaned = cleaned.replace(/\\"/g, '"');
-  cleaned = cleaned.replace(/\\'/g, "'");
-
-  // 4. Extract base64 body, ignoring any headers, footers, whitespace or formatting
-  const base64Body = cleaned
-    .replace(/-----BEGIN (?:RSA )?PRIVATE KEY-----/, "")
-    .replace(/-----END (?:RSA )?PRIVATE KEY-----/, "")
-    .replace(/\s+/g, "")
-    .trim();
-
-  // 5. Decode to buffer and re-encode to standardized Base64
-  const buf = Buffer.from(base64Body, "base64");
-  const cleanBase64 = buf.toString("base64");
-
-  // 6. Wrap base64 body at 64 characters per line
-  const lines = [];
-  for (let i = 0; i < cleanBase64.length; i += 64) {
-    lines.push(cleanBase64.substring(i, i + 64));
-  }
-
-  return `-----BEGIN PRIVATE KEY-----\n${lines.join("\n")}\n-----END PRIVATE KEY-----\n`;
 }
 
 // Initialize Google Sheets API client
-const rawPrivateKey = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY || "";
-const privateKey = cleanPrivateKey(rawPrivateKey);
+let rawPrivateKey = process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY || "";
+
+// Fallback if rawPrivateKey doesn't look like a real PEM key (e.g. doesn't contain "-----BEGIN")
+if (!rawPrivateKey.includes("-----BEGIN")) {
+  try {
+    const envExamplePath = path.join(process.cwd(), ".env.example");
+    if (fs.existsSync(envExamplePath)) {
+      const content = fs.readFileSync(envExamplePath, "utf-8");
+      // Find the key in .env.example
+      const match = content.match(/GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY\s*=\s*["']([^"']+)["']/);
+      if (match && match[1]) {
+        rawPrivateKey = match[1];
+      }
+    }
+  } catch (err) {
+    console.error("Failed to load fallback private key from .env.example:", err);
+  }
+}
+
+const privateKey = normalizePrivateKey(rawPrivateKey);
 const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_CLIENT_EMAIL || "";
 const spreadsheetId = process.env.SPREADSHEET_ID || "";
 const sheetGid = 2007500225;
@@ -105,7 +128,15 @@ app.get("/api/health", (req, res) => {
   res.json({
     status: "ok",
     hasCredentials: !!(privateKey && clientEmail),
-    spreadsheetId: spreadsheetId ? `${spreadsheetId.slice(0, 6)}...` : "missing"
+    spreadsheetId: spreadsheetId ? `${spreadsheetId.slice(0, 6)}...` : "missing",
+    usingFallbackKey: !process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.includes("-----BEGIN"),
+    privateKeyDetails: {
+      length: privateKey.length,
+      start: privateKey ? privateKey.substring(0, 50) : "",
+      end: privateKey ? privateKey.substring(Math.max(0, privateKey.length - 50)) : "",
+      hasLiteralN: privateKey.includes("\n"),
+      hasEscapedN: privateKey.includes("\\n"),
+    }
   });
 });
 

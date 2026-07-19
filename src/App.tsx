@@ -22,7 +22,9 @@ import {
   LayoutDashboard,
   BarChart3,
   SlidersHorizontal,
-  ListChecks
+  ListChecks,
+  Menu,
+  MoreVertical
 } from "lucide-react";
 import { parseSheetData, calculateDashboardStats, normalizeDate } from "./utils";
 import { ContentRecord, DashboardStats } from "./types";
@@ -44,6 +46,7 @@ export default function App() {
   const [layoutMode, setLayoutMode] = useState<"desktop" | "mobile">("desktop");
   const [activeTab, setActiveTab] = useState<"summary" | "charts" | "filters" | "records">("summary");
   const [isUserOverride, setIsUserOverride] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
 
   // Auto-detect screen width to default to mobile view on small screens
   useEffect(() => {
@@ -308,10 +311,10 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 font-sans text-slate-200 antialiased" id="dashboard-app-root">
+    <div className={`min-h-screen bg-slate-950 font-sans text-slate-200 antialiased ${layoutMode === "mobile" ? "h-screen overflow-hidden lg:h-auto lg:overflow-visible" : ""}`} id="dashboard-app-root">
       
       {/* 1. Header Banner */}
-      <header className="bg-black text-white border-b border-slate-800 sticky top-0 z-50 shadow-2xl" id="main-header">
+      <header className={`bg-black text-white border-b border-slate-800 sticky top-0 z-50 shadow-2xl ${layoutMode === "mobile" ? "hidden lg:block" : ""}`} id="main-header">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
@@ -624,7 +627,7 @@ export default function App() {
         </main>
       ) : (
         /* Mobile App Mode Portal */
-        <div className="min-h-[calc(100vh-80px)] flex flex-col justify-center items-center py-6 bg-slate-950 px-4" id="mobile-app-portal">
+        <div className="h-[100dvh] lg:h-auto lg:min-h-[calc(100vh-80px)] w-full flex flex-col lg:justify-center lg:items-center py-0 lg:py-6 bg-slate-950 px-0 lg:px-4 overflow-hidden lg:overflow-visible" id="mobile-app-portal">
           
           {/* Helper Desktop Tips for Simulated Mobile View */}
           <div className="hidden lg:flex flex-col items-center mb-5 text-center max-w-md space-y-1.5 bg-slate-900/40 border border-slate-850 px-5 py-3 rounded-2xl shadow-xl">
@@ -637,7 +640,7 @@ export default function App() {
           </div>
 
           {/* Smartphone Shell on Desktop, Native Screen on Physical Mobile */}
-          <div className="lg:max-w-[400px] lg:w-full lg:h-[810px] lg:my-2 lg:rounded-[55px] lg:border-[12px] lg:border-slate-800 lg:shadow-[0_0_80px_rgba(0,0,0,0.85)] lg:overflow-hidden bg-slate-950 flex flex-col w-full min-h-screen lg:min-h-0 relative border-slate-800" id="mobile-device-frame">
+          <div className="lg:max-w-[400px] lg:w-full lg:h-[810px] lg:my-2 lg:rounded-[55px] border-0 lg:border-[12px] lg:border-slate-800 lg:shadow-[0_0_80px_rgba(0,0,0,0.85)] lg:overflow-hidden bg-slate-950 flex flex-col w-full h-[100dvh] lg:h-[810px] lg:min-h-0 relative overflow-hidden" id="mobile-device-frame">
             
             {/* Simulated iPhone Speaker & Camera Notch - ONLY visible on Large/Desktop screens */}
             <div className="hidden lg:block absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-800 rounded-b-2xl z-50">
@@ -655,44 +658,135 @@ export default function App() {
             </div>
 
             {/* Mobile Native Header */}
-            <div className="px-4 py-3.5 bg-slate-900 border-b border-slate-850 flex items-center justify-between shrink-0 z-10">
+            <div className="px-3.5 py-2 bg-slate-900 border-b border-slate-850 flex items-center justify-between shrink-0 z-20 relative">
               <div className="flex items-center gap-2">
                 {brandLogo ? (
                   <img
                     src={brandLogo}
                     alt="Logo"
-                    className="h-8 w-auto object-contain"
+                    className="h-6.5 w-auto object-contain"
                     referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <div className="bg-slate-950 px-2 py-1 rounded-lg text-xs font-black text-indigo-400 tracking-wider">10MS</div>
+                  <div className="bg-slate-950 px-1.5 py-0.5 rounded text-[10px] font-black text-indigo-400 tracking-wider">10MS</div>
                 )}
-                <div>
-                  <div className="flex items-center gap-1">
-                    <h2 className="text-[11px] font-bold text-white leading-tight">Content Ops App</h2>
-                    <span className="text-[8px] font-mono text-slate-500 font-bold tracking-tight">v1.2.4</span>
-                  </div>
-                  <div className="flex items-center gap-1 mt-0.5">
-                    <span className="relative flex h-1.5 w-1.5">
+                <div className="flex items-center gap-1.5">
+                  <h2 className="text-xs font-bold text-white leading-tight">Content Ops</h2>
+                  <span className="inline-flex items-center gap-0.5 bg-rose-950/45 px-1.5 py-0.5 rounded-full text-[8px] font-black text-rose-400 tracking-wider">
+                    <span className="relative flex h-1 w-1">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-rose-500"></span>
+                      <span className="relative inline-flex rounded-full h-1 w-1 bg-rose-500"></span>
                     </span>
-                    <span className="text-[8px] text-rose-400 font-black tracking-wider uppercase leading-none">LIVE FEED</span>
-                  </div>
+                    <span>LIVE</span>
+                  </span>
+                  
+                  {/* BD Clock on Mobile Header */}
+                  <span className="inline-flex items-center gap-1 bg-indigo-950/60 border border-indigo-900/40 px-1.5 py-0.5 rounded text-[9px] font-bold text-indigo-300 font-mono">
+                    {bdTime ? bdTime.split(" ")[0] : "..."}
+                  </span>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                {/* Sync Trigger button */}
+              <div className="flex items-center gap-1.5">
+                {/* Sync Action */}
                 <button
                   onClick={() => fetchData(true)}
                   disabled={isLoading || isRefreshing}
-                  className="p-1.5 rounded-xl bg-slate-950 border border-slate-850 hover:bg-slate-800 text-indigo-400 active:scale-95 transition-all cursor-pointer disabled:opacity-40"
-                  title="Force Reload Google Sheet Data"
+                  className="p-1.5 rounded-lg bg-slate-950 border border-slate-850 hover:bg-slate-800 text-indigo-400 active:scale-95 transition-all cursor-pointer disabled:opacity-40"
+                  title="Sync Google Sheet"
                 >
-                  <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+                  <RefreshCw className={`w-3 h-3 ${isRefreshing ? "animate-spin" : ""}`} />
+                </button>
+
+                {/* Hamburger Options Menu Trigger */}
+                <button
+                  onClick={() => setShowMobileMenu(!showMobileMenu)}
+                  className={`p-1.5 rounded-lg border active:scale-95 transition-all cursor-pointer ${
+                    showMobileMenu 
+                      ? "bg-indigo-600 border-indigo-500 text-white" 
+                      : "bg-slate-950 border-slate-850 hover:bg-slate-800 text-slate-300"
+                  }`}
+                  title="More Options Menu"
+                >
+                  <Menu className="w-3.5 h-3.5" />
                 </button>
               </div>
+
+              {/* Mobile Dropdown Options Menu (Collapsible Drawer-like Panel) */}
+              {showMobileMenu && (
+                <>
+                  {/* Backdrop */}
+                  <div className="fixed inset-0 z-30" onClick={() => setShowMobileMenu(false)} />
+                  {/* Menu Panel */}
+                  <div className="absolute top-11 right-3 z-40 bg-slate-900 border border-slate-800 rounded-2xl p-1.5 w-56 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-150">
+                    <div className="px-2.5 py-1.5 text-[9px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-850 mb-1">
+                      Operations Menu
+                    </div>
+                    
+                    <button
+                      onClick={() => {
+                        toggleLayoutMode("desktop");
+                        setShowMobileMenu(false);
+                      }}
+                      className="w-full flex items-center gap-2 px-2.5 py-2 text-xs text-slate-200 hover:bg-slate-800 rounded-xl transition-all text-left cursor-pointer font-medium"
+                    >
+                      <Monitor className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>Switch to Desktop view</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setShowLogoModal(true);
+                        setShowMobileMenu(false);
+                      }}
+                      className="w-full flex items-center gap-2 px-2.5 py-2 text-xs text-slate-200 hover:bg-slate-800 rounded-xl transition-all text-left cursor-pointer font-medium"
+                    >
+                      <ImageIcon className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>Change Brand Logo</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        handleDownloadCSV();
+                        setShowMobileMenu(false);
+                      }}
+                      disabled={filteredRecords.length === 0}
+                      className="w-full flex items-center gap-2 px-2.5 py-2 text-xs text-slate-200 hover:bg-slate-800 disabled:opacity-40 rounded-xl transition-all text-left cursor-pointer font-medium"
+                    >
+                      <Download className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>Download CSV Report</span>
+                    </button>
+
+                    {/* Conditional Filters Reset */}
+                    {(searchQuery || selectedDate || selectedCourse || selectedSubject || selectedCoordinator || complianceFilter !== "all") && (
+                      <button
+                        onClick={() => {
+                          resetFilters();
+                          setShowMobileMenu(false);
+                        }}
+                        className="w-full flex items-center gap-2 px-2.5 py-2 text-xs text-rose-400 hover:bg-rose-950/20 rounded-xl transition-all text-left cursor-pointer font-medium"
+                      >
+                        <X className="w-3.5 h-3.5 text-rose-500" />
+                        <span>Reset Active Filters</span>
+                      </button>
+                    )}
+
+                    {/* Clock & Status info */}
+                    <div className="border-t border-slate-850 mt-1.5 pt-1.5 px-2.5 pb-1 flex flex-col gap-1 text-[9px] text-slate-400 font-mono">
+                      <div className="flex items-center justify-between">
+                        <span>BD Clock:</span>
+                        <span className="text-indigo-400 font-bold">{bdTime ? bdTime.split(" ")[0] : "..."}</span>
+                      </div>
+                      {lastSynced && (
+                        <div className="flex items-center justify-between">
+                          <span>Synced at:</span>
+                          <span className="text-slate-400 text-right">{lastSynced.toLocaleTimeString()}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Scrollable Content Port */}
@@ -952,7 +1046,7 @@ export default function App() {
       )}
 
       {/* 3. Humble footer showing workspace metadata */}
-      <footer className="bg-slate-950 border-t border-slate-900/80 py-8 mt-12 text-center" id="main-footer">
+      <footer className={`bg-slate-950 border-t border-slate-900/80 py-8 mt-12 text-center ${layoutMode === "mobile" ? "hidden" : ""}`} id="main-footer">
         <p className="text-xs text-slate-500 flex items-center justify-center gap-2">
           <Database className="w-4 h-4 text-slate-600" />
           <span>Connected Google Sheet: <strong className="font-semibold text-slate-400 font-mono">13H2FFJ8WzKbis-Ud9SXlea9NNTM6exnOaguML8MVZI4</strong></span>
