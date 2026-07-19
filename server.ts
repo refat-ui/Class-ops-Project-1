@@ -235,4 +235,10 @@ async function setupViteOrStatic() {
   });
 }
 
-setupViteOrStatic();
+// Only start the Express listener and asset serving if we are NOT on Vercel.
+// On Vercel, the front-end is served statically and the Express app is run serverless.
+if (!process.env.VERCEL) {
+  setupViteOrStatic();
+}
+
+export default app;
