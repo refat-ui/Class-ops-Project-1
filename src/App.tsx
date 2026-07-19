@@ -290,10 +290,8 @@ export default function App() {
       <header className="bg-black text-white border-b border-slate-800 sticky top-0 z-50 shadow-2xl" id="main-header">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-20 sm:h-20 py-3 sm:py-0 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0">
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setShowLogoModal(true)}
-              className="group flex items-center justify-center shrink-0 cursor-pointer relative hover:scale-105 active:scale-95 transition-all duration-200 p-1 rounded-xl"
-              title="Click to change or replace brand logo"
+            <div
+              className="flex items-center justify-center shrink-0 p-1"
               id="brand-logo-container"
             >
               {brandLogo ? (
@@ -309,11 +307,7 @@ export default function App() {
                   <span className="text-[7px] text-slate-400 font-bold uppercase tracking-widest leading-none mt-1">OPS</span>
                 </div>
               )}
-              {/* Subtle dynamic overlay badge on hover */}
-              <div className="absolute inset-x-0 -bottom-1 bg-indigo-600 text-[8px] font-bold text-white uppercase tracking-wider scale-0 group-hover:scale-100 transition-transform duration-150 rounded-md py-0.5 px-1 shadow-md">
-                Change
-              </div>
-            </button>
+            </div>
 
             <div>
               <h1 className="text-md sm:text-lg font-bold tracking-tight text-white">
@@ -583,151 +577,6 @@ export default function App() {
           Operational Dashboard • Provided Service Account Access
         </p>
       </footer>
-
-      {/* Brand Logo Settings Modal */}
-      {showLogoModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-xs" id="logo-settings-modal">
-          <div className="relative bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-md p-6 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-150 text-slate-200">
-            {/* Header */}
-            <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-              <div className="flex items-center gap-2">
-                <ImageIcon className="w-5 h-5 text-indigo-400" />
-                <h3 className="text-sm font-bold text-white">Brand Logo Configuration</h3>
-              </div>
-              <button
-                onClick={() => setShowLogoModal(false)}
-                className="p-1 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-all cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Body */}
-            <div className="py-4 space-y-5">
-              
-              {/* Info text & External Links */}
-              <div className="bg-slate-950/40 border border-slate-800/60 rounded-2xl p-4 space-y-3">
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Provide a web image URL or upload directly to display your company's brand logo next to the dashboard title.
-                </p>
-                <div className="space-y-1.5 pt-1">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Recommended Public Image Hosts:</span>
-                  <div className="flex flex-wrap gap-2">
-                    <a
-                      href="https://postimages.org"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 rounded-lg border border-indigo-500/20 transition-all"
-                    >
-                      <LinkIcon className="w-3 h-3" />
-                      Postimages.org
-                    </a>
-                    <a
-                      href="https://imgur.com/upload"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 rounded-lg border border-emerald-500/20 transition-all"
-                    >
-                      <LinkIcon className="w-3 h-3" />
-                      Imgur.com
-                    </a>
-                    <a
-                      href="https://pasteboard.co"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-medium text-pink-400 bg-pink-500/10 hover:bg-pink-500/20 rounded-lg border border-pink-500/20 transition-all"
-                    >
-                      <LinkIcon className="w-3 h-3" />
-                      Pasteboard
-                    </a>
-                  </div>
-                  <p className="text-[10px] text-slate-500 italic mt-1 leading-normal">
-                    *Upload on one of these sites, then copy the <strong>Direct Link</strong> (ending with .png, .jpg, or .webp) and paste it below.
-                  </p>
-                </div>
-              </div>
-
-              {/* Live Preview */}
-              <div className="flex items-center gap-4 p-3 bg-slate-950/60 border border-slate-800 rounded-xl">
-                <div className="w-14 h-14 bg-slate-900 border border-slate-700/60 rounded-xl flex items-center justify-center overflow-hidden shrink-0">
-                  {brandLogo ? (
-                    <img
-                      src={brandLogo}
-                      alt="Preview"
-                      className="w-full h-full object-contain"
-                      referrerPolicy="no-referrer"
-                    />
-                  ) : (
-                    <span className="text-[10px] text-slate-500 uppercase tracking-widest font-mono">None</span>
-                  )}
-                </div>
-                <div>
-                  <h4 className="text-xs font-semibold text-slate-200">Active Logo Preview</h4>
-                  <p className="text-[10px] text-slate-400 mt-0.5">
-                    {brandLogo ? "Custom logo active" : "Default system letters badge active"}
-                  </p>
-                </div>
-              </div>
-
-              {/* Option 1: File Upload */}
-              <div className="space-y-2">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Option 1: Direct Local Upload</span>
-                <label className="flex flex-col items-center justify-center p-4 border border-dashed border-slate-700 hover:border-indigo-500/60 rounded-2xl cursor-pointer hover:bg-slate-850/50 transition-all group">
-                  <Upload className="w-5 h-5 text-slate-400 group-hover:text-indigo-400 transition-colors mb-1.5" />
-                  <span className="text-xs font-medium text-slate-300 group-hover:text-white">Choose Image File</span>
-                  <span className="text-[10px] text-slate-500 mt-0.5">Supports PNG, JPG, WEBP (Max 2MB)</span>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleLogoUpload}
-                    className="hidden"
-                  />
-                </label>
-              </div>
-
-              {/* Option 2: Image URL */}
-              <form onSubmit={handleLogoUrlSubmit} className="space-y-2">
-                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block">Option 2: Public Logo URL</span>
-                <div className="flex gap-2">
-                  <input
-                    type="url"
-                    placeholder="https://example.com/logo.png"
-                    value={logoInputUrl}
-                    onChange={(e) => setLogoInputUrl(e.target.value)}
-                    className="flex-1 min-w-0 bg-slate-950 border border-slate-800 focus:border-indigo-500 rounded-xl px-3 py-2 text-xs text-white placeholder-slate-600 focus:outline-hidden font-mono"
-                  />
-                  <button
-                    type="submit"
-                    className="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-xl text-xs font-semibold shadow-md shrink-0 transition-all active:scale-95 cursor-pointer"
-                  >
-                    Apply URL
-                  </button>
-                </div>
-              </form>
-
-            </div>
-
-            {/* Footer */}
-            <div className="flex items-center justify-between pt-4 border-t border-slate-800 mt-2">
-              <button
-                type="button"
-                onClick={handleLogoReset}
-                className="text-xs font-semibold text-rose-400 hover:text-rose-300 transition-colors cursor-pointer"
-              >
-                Reset to Default
-              </button>
-              
-              <button
-                type="button"
-                onClick={() => setShowLogoModal(false)}
-                className="bg-slate-800 hover:bg-slate-750 text-white px-4 py-2 rounded-xl text-xs font-semibold transition-all active:scale-95 cursor-pointer"
-              >
-                Done
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
     </div>
   );
