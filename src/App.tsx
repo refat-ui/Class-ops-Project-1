@@ -42,33 +42,6 @@ export default function App() {
   const [errorSuggestions, setErrorSuggestions] = useState<string[]>([]);
   const [lastSynced, setLastSynced] = useState<Date | null>(null);
 
-  // Layout mode & Native mobile tab states
-  const [layoutMode, setLayoutMode] = useState<"desktop" | "mobile">("desktop");
-  const [activeTab, setActiveTab] = useState<"summary" | "charts" | "filters" | "records">("summary");
-  const [isUserOverride, setIsUserOverride] = useState(false);
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
-
-  // Auto-detect screen width to default to mobile view on small screens
-  useEffect(() => {
-    const handleResize = () => {
-      if (!isUserOverride) {
-        if (window.innerWidth < 1024) {
-          setLayoutMode("mobile");
-        } else {
-          setLayoutMode("desktop");
-        }
-      }
-    };
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, [isUserOverride]);
-
-  const toggleLayoutMode = (mode: "desktop" | "mobile") => {
-    setLayoutMode(mode);
-    setIsUserOverride(true);
-  };
-
   // Logo States (Uploadable and Customisable)
   const [brandLogo, setBrandLogo] = useState<string>(() => {
     return localStorage.getItem("brand_logo") || "https://upload.wikimedia.org/wikipedia/commons/3/3a/10_Minute_School_Logo.png";
@@ -311,11 +284,11 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen bg-slate-950 font-sans text-slate-200 antialiased ${layoutMode === "mobile" ? "h-screen overflow-hidden lg:h-auto lg:overflow-visible" : ""}`} id="dashboard-app-root">
+    <div className="min-h-screen bg-slate-950 font-sans text-slate-200 antialiased" id="dashboard-app-root">
       
       {/* 1. Header Banner */}
-      <header className={`bg-black text-white border-b border-slate-800 sticky top-0 z-50 shadow-2xl ${layoutMode === "mobile" ? "hidden lg:block" : ""}`} id="main-header">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      <header className="bg-black text-white border-b border-slate-800 sticky top-0 z-50 shadow-2xl" id="main-header">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-20 sm:h-20 py-3 sm:py-0 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowLogoModal(true)}
@@ -365,39 +338,11 @@ export default function App() {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full sm:w-auto">
-            {/* View Mode Toggle Segmented Control (Interactive Portal) */}
-            <div className="hidden lg:flex items-center bg-slate-900 border border-slate-800 p-1 rounded-xl shadow-inner" id="layout-view-toggle">
-              <button
-                onClick={() => toggleLayoutMode("desktop")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all cursor-pointer ${
-                  layoutMode === "desktop"
-                    ? "bg-indigo-600 text-white shadow-md font-extrabold"
-                    : "text-slate-400 hover:text-white hover:bg-slate-850/60"
-                }`}
-                title="Desktop View Mode"
-              >
-                <Monitor className="w-3.5 h-3.5" />
-                <span>Desktop Portal</span>
-              </button>
-              <button
-                onClick={() => toggleLayoutMode("mobile")}
-                className={`flex items-center gap-1.5 px-3 py-1.5 text-[11px] font-bold rounded-lg transition-all cursor-pointer ${
-                  layoutMode === "mobile"
-                    ? "bg-indigo-600 text-white shadow-md font-extrabold"
-                    : "text-slate-400 hover:text-white hover:bg-slate-850/60"
-                }`}
-                title="Simulated Mobile App View Mode"
-              >
-                <Smartphone className="w-3.5 h-3.5" />
-                <span>Mobile App</span>
-              </button>
-            </div>
-
+          <div className="flex flex-row items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-start">
             {/* Real-time Bangladesh Clock */}
-            <div className="flex items-center justify-center gap-1.5 text-[11px] sm:text-xs text-indigo-300 font-mono bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl shadow-inner w-full sm:w-auto" id="realtime-bd-clock">
-              <Clock className="w-3.5 h-3.5 text-indigo-400 animate-pulse" />
-              <span className="font-semibold">Time: {bdTime || "..."}</span>
+            <div className="flex items-center justify-center gap-1.5 text-[10px] sm:text-xs text-indigo-300 font-mono bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl shadow-inner flex-1 sm:flex-none sm:w-auto" id="realtime-bd-clock">
+              <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-indigo-400 animate-pulse" />
+              <span className="font-semibold whitespace-nowrap">Time: {bdTime || "..."}</span>
             </div>
 
             {lastSynced && (
@@ -410,19 +355,18 @@ export default function App() {
             <button
               onClick={() => fetchData(true)}
               disabled={isLoading || isRefreshing}
-              className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-[11px] sm:text-xs font-semibold shadow-md transition-all duration-200 active:scale-95 w-full sm:w-auto cursor-pointer"
+              className="flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 text-white px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-[10px] sm:text-xs font-semibold shadow-md transition-all duration-200 active:scale-95 flex-1 sm:flex-none sm:w-auto cursor-pointer"
               id="sync-now-button"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-              <span>{isRefreshing ? "Syncing..." : "Sync Live Sheet"}</span>
+              <RefreshCw className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+              <span className="whitespace-nowrap">{isRefreshing ? "Syncing..." : "Sync Live Sheet"}</span>
             </button>
           </div>
         </div>
       </header>
 
       {/* 2. Main Content Stage */}
-      {layoutMode === "desktop" ? (
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 animate-in fade-in duration-200" id="dashboard-main-stage">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 animate-in fade-in duration-200" id="dashboard-main-stage">
           
           {/* Error Notification Block */}
           {error && (
@@ -625,428 +569,12 @@ export default function App() {
           )}
 
         </main>
-      ) : (
-        /* Mobile App Mode Portal */
-        <div className="h-[100dvh] lg:h-auto lg:min-h-[calc(100vh-80px)] w-full flex flex-col lg:justify-center lg:items-center py-0 lg:py-6 bg-slate-950 px-0 lg:px-4 overflow-hidden lg:overflow-visible" id="mobile-app-portal">
-          
-          {/* Helper Desktop Tips for Simulated Mobile View */}
-          <div className="hidden lg:flex flex-col items-center mb-5 text-center max-w-md space-y-1.5 bg-slate-900/40 border border-slate-850 px-5 py-3 rounded-2xl shadow-xl">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[11px] font-bold rounded-full">
-              📱 Interactive Mobile App Sandbox Active
-            </span>
-            <p className="text-[11px] text-slate-400 leading-relaxed">
-              This simulated smartphone viewport displays the custom native-feel mobile app interface. Resize your browser width to trigger a full-screen experience!
-            </p>
-          </div>
 
-          {/* Smartphone Shell on Desktop, Native Screen on Physical Mobile */}
-          <div className="lg:max-w-[400px] lg:w-full lg:h-[810px] lg:my-2 lg:rounded-[55px] border-0 lg:border-[12px] lg:border-slate-800 lg:shadow-[0_0_80px_rgba(0,0,0,0.85)] lg:overflow-hidden bg-slate-950 flex flex-col w-full h-[100dvh] lg:h-[810px] lg:min-h-0 relative overflow-hidden" id="mobile-device-frame">
-            
-            {/* Simulated iPhone Speaker & Camera Notch - ONLY visible on Large/Desktop screens */}
-            <div className="hidden lg:block absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-slate-800 rounded-b-2xl z-50">
-              <div className="w-12 h-1 bg-slate-900 rounded-full mx-auto mt-1" />
-            </div>
 
-            {/* Simulated Status Bar - ONLY visible on Large/Desktop screens */}
-            <div className="hidden lg:flex items-center justify-between px-6 pt-7 pb-2.5 bg-black text-slate-400 text-[11px] font-semibold tracking-tight shrink-0 select-none border-b border-slate-900">
-              <span className="text-white font-bold">{bdTime ? bdTime.split(" ")[0] : "10:48"}</span>
-              <div className="flex items-center gap-1.5">
-                <Signal className="w-3.5 h-3.5 text-slate-300" />
-                <Wifi className="w-3.5 h-3.5 text-slate-300" />
-                <Battery className="w-4 h-4 text-emerald-400" />
-              </div>
-            </div>
 
-            {/* Mobile Native Header */}
-            <div className="px-3.5 py-2 bg-slate-900 border-b border-slate-850 flex items-center justify-between shrink-0 z-20 relative">
-              <div className="flex items-center gap-2">
-                {brandLogo ? (
-                  <img
-                    src={brandLogo}
-                    alt="Logo"
-                    className="h-6.5 w-auto object-contain"
-                    referrerPolicy="no-referrer"
-                  />
-                ) : (
-                  <div className="bg-slate-950 px-1.5 py-0.5 rounded text-[10px] font-black text-indigo-400 tracking-wider">10MS</div>
-                )}
-                <div className="flex items-center gap-1.5">
-                  <h2 className="text-xs font-bold text-white leading-tight">Content Ops</h2>
-                  <span className="inline-flex items-center gap-0.5 bg-rose-950/45 px-1.5 py-0.5 rounded-full text-[8px] font-black text-rose-400 tracking-wider">
-                    <span className="relative flex h-1 w-1">
-                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                      <span className="relative inline-flex rounded-full h-1 w-1 bg-rose-500"></span>
-                    </span>
-                    <span>LIVE</span>
-                  </span>
-                  
-                  {/* BD Clock on Mobile Header */}
-                  <span className="inline-flex items-center gap-1 bg-indigo-950/60 border border-indigo-900/40 px-1.5 py-0.5 rounded text-[9px] font-bold text-indigo-300 font-mono">
-                    {bdTime ? bdTime.split(" ")[0] : "..."}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-1.5">
-                {/* Sync Action */}
-                <button
-                  onClick={() => fetchData(true)}
-                  disabled={isLoading || isRefreshing}
-                  className="p-1.5 rounded-lg bg-slate-950 border border-slate-850 hover:bg-slate-800 text-indigo-400 active:scale-95 transition-all cursor-pointer disabled:opacity-40"
-                  title="Sync Google Sheet"
-                >
-                  <RefreshCw className={`w-3 h-3 ${isRefreshing ? "animate-spin" : ""}`} />
-                </button>
-
-                {/* Hamburger Options Menu Trigger */}
-                <button
-                  onClick={() => setShowMobileMenu(!showMobileMenu)}
-                  className={`p-1.5 rounded-lg border active:scale-95 transition-all cursor-pointer ${
-                    showMobileMenu 
-                      ? "bg-indigo-600 border-indigo-500 text-white" 
-                      : "bg-slate-950 border-slate-850 hover:bg-slate-800 text-slate-300"
-                  }`}
-                  title="More Options Menu"
-                >
-                  <Menu className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              {/* Mobile Dropdown Options Menu (Collapsible Drawer-like Panel) */}
-              {showMobileMenu && (
-                <>
-                  {/* Backdrop */}
-                  <div className="fixed inset-0 z-30" onClick={() => setShowMobileMenu(false)} />
-                  {/* Menu Panel */}
-                  <div className="absolute top-11 right-3 z-40 bg-slate-900 border border-slate-800 rounded-2xl p-1.5 w-56 shadow-2xl animate-in fade-in slide-in-from-top-2 duration-150">
-                    <div className="px-2.5 py-1.5 text-[9px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-850 mb-1">
-                      Operations Menu
-                    </div>
-                    
-                    <button
-                      onClick={() => {
-                        toggleLayoutMode("desktop");
-                        setShowMobileMenu(false);
-                      }}
-                      className="w-full flex items-center gap-2 px-2.5 py-2 text-xs text-slate-200 hover:bg-slate-800 rounded-xl transition-all text-left cursor-pointer font-medium"
-                    >
-                      <Monitor className="w-3.5 h-3.5 text-indigo-400" />
-                      <span>Switch to Desktop view</span>
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        setShowLogoModal(true);
-                        setShowMobileMenu(false);
-                      }}
-                      className="w-full flex items-center gap-2 px-2.5 py-2 text-xs text-slate-200 hover:bg-slate-800 rounded-xl transition-all text-left cursor-pointer font-medium"
-                    >
-                      <ImageIcon className="w-3.5 h-3.5 text-indigo-400" />
-                      <span>Change Brand Logo</span>
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        handleDownloadCSV();
-                        setShowMobileMenu(false);
-                      }}
-                      disabled={filteredRecords.length === 0}
-                      className="w-full flex items-center gap-2 px-2.5 py-2 text-xs text-slate-200 hover:bg-slate-800 disabled:opacity-40 rounded-xl transition-all text-left cursor-pointer font-medium"
-                    >
-                      <Download className="w-3.5 h-3.5 text-indigo-400" />
-                      <span>Download CSV Report</span>
-                    </button>
-
-                    {/* Conditional Filters Reset */}
-                    {(searchQuery || selectedDate || selectedCourse || selectedSubject || selectedCoordinator || complianceFilter !== "all") && (
-                      <button
-                        onClick={() => {
-                          resetFilters();
-                          setShowMobileMenu(false);
-                        }}
-                        className="w-full flex items-center gap-2 px-2.5 py-2 text-xs text-rose-400 hover:bg-rose-950/20 rounded-xl transition-all text-left cursor-pointer font-medium"
-                      >
-                        <X className="w-3.5 h-3.5 text-rose-500" />
-                        <span>Reset Active Filters</span>
-                      </button>
-                    )}
-
-                    {/* Clock & Status info */}
-                    <div className="border-t border-slate-850 mt-1.5 pt-1.5 px-2.5 pb-1 flex flex-col gap-1 text-[9px] text-slate-400 font-mono">
-                      <div className="flex items-center justify-between">
-                        <span>BD Clock:</span>
-                        <span className="text-indigo-400 font-bold">{bdTime ? bdTime.split(" ")[0] : "..."}</span>
-                      </div>
-                      {lastSynced && (
-                        <div className="flex items-center justify-between">
-                          <span>Synced at:</span>
-                          <span className="text-slate-400 text-right">{lastSynced.toLocaleTimeString()}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-
-            {/* Scrollable Content Port */}
-            <div className="flex-1 overflow-y-auto px-3.5 py-4 space-y-4 bg-slate-950 scrollbar-thin scrollbar-thumb-slate-800" id="mobile-viewport">
-              {isLoading && !isRefreshing ? (
-                <div className="flex flex-col items-center justify-center h-full min-h-[300px] space-y-4">
-                  <RefreshCw className="w-8 h-8 text-indigo-500 animate-spin" />
-                  <p className="text-xs text-slate-400 font-semibold font-mono">Loading core feeds...</p>
-                </div>
-              ) : error ? (
-                <div className="bg-rose-950/20 border border-rose-900/50 rounded-2xl p-4 space-y-3">
-                  <p className="text-xs text-rose-300 leading-normal">{error}</p>
-                </div>
-              ) : (
-                <>
-                  {/* KPI Overview Tab */}
-                  {activeTab === "summary" && (
-                    <div className="space-y-4 animate-in fade-in duration-200">
-                      <div className="flex items-center justify-between pb-1">
-                        <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest block">Dashboard Summary</span>
-                        <span className="text-[9px] text-slate-500 font-mono">Updated: {lastSynced?.toLocaleTimeString() || "..."}</span>
-                      </div>
-                      <StatsOverview stats={overallStats} isCompact={true} />
-                      <div className="bg-slate-900/30 border border-slate-850/60 p-3 rounded-2xl space-y-1.5">
-                        <h4 className="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
-                          <AlertCircle className="w-3.5 h-3.5 text-indigo-400" />
-                          Completeness Threshold
-                        </h4>
-                        <p className="text-[10px] text-slate-400 leading-relaxed">
-                          To make a live class operational, all 6 mandatory meta columns must be fully populated. Incomplete records will trigger action items.
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Interactive Charts Tab */}
-                  {activeTab === "charts" && (
-                    <div className="space-y-4 animate-in fade-in duration-200">
-                      <span className="text-[10px] font-black text-indigo-400 uppercase tracking-widest block pb-1">Operational Metrics</span>
-                      <MetricCharts stats={overallStats} isCompact={true} />
-                    </div>
-                  )}
-
-                  {/* Filter Hub Tab */}
-                  {activeTab === "filters" && (
-                    <div className="space-y-4 animate-in fade-in duration-200">
-                      <div className="bg-slate-900/30 p-4 rounded-2xl border border-slate-850 space-y-4">
-                        <div className="flex items-center justify-between pb-2 border-b border-slate-850">
-                          <h3 className="text-xs font-bold text-white flex items-center gap-1.5">
-                            <Filter className="w-3.5 h-3.5 text-indigo-400" />
-                            Search Filter Hub
-                          </h3>
-                          <button 
-                            onClick={resetFilters}
-                            className="text-[10px] font-bold text-indigo-400 hover:text-indigo-300 cursor-pointer"
-                          >
-                            Reset All
-                          </button>
-                        </div>
-
-                        <div className="space-y-3.5">
-                          <div className="space-y-1">
-                            <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Search Keywords</label>
-                            <div className="relative">
-                              <Search className="absolute left-3 top-2.5 w-3.5 h-3.5 text-slate-500" />
-                              <input
-                                type="text"
-                                placeholder="Title, topic, course..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                              />
-                            </div>
-                          </div>
-
-                          <div className="space-y-1">
-                            <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Operational Date</label>
-                            <DatePicker
-                              selectedDate={selectedDate}
-                              onChange={setSelectedDate}
-                              allDates={overallStats.allDates}
-                            />
-                          </div>
-
-                          <div className="space-y-1">
-                            <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Course Channel</label>
-                            <select
-                              value={selectedCourse}
-                              onChange={(e) => setSelectedCourse(e.target.value)}
-                              className="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none"
-                            >
-                              <option value="">All Courses</option>
-                              {overallStats.allCourses.map((c, idx) => (
-                                <option key={idx} value={c}>{c}</option>
-                              ))}
-                            </select>
-                          </div>
-
-                          <div className="space-y-1">
-                            <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Subject Area</label>
-                            <select
-                              value={selectedSubject}
-                              onChange={(e) => setSelectedSubject(e.target.value)}
-                              className="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none"
-                            >
-                              <option value="">All Subjects</option>
-                              {overallStats.allSubjects.map((s, idx) => (
-                                <option key={idx} value={s}>{s}</option>
-                              ))}
-                            </select>
-                          </div>
-
-                          <div className="space-y-1">
-                            <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Coordinator Stakeholder</label>
-                            <select
-                              value={selectedCoordinator}
-                              onChange={(e) => setSelectedCoordinator(e.target.value)}
-                              className="w-full text-xs bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-slate-200 focus:outline-none"
-                            >
-                              <option value="">All Coordinators</option>
-                              {overallStats.allCoordinators.map((c, idx) => (
-                                <option key={idx} value={c}>{c}</option>
-                              ))}
-                            </select>
-                          </div>
-                        </div>
-
-                        <div className="pt-3 border-t border-slate-800 space-y-2">
-                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Compliance State:</span>
-                          <div className="grid grid-cols-3 gap-1.5">
-                            <button
-                              onClick={() => setComplianceFilter("all")}
-                              className={`py-1.5 text-[10px] font-bold rounded-lg border transition-all cursor-pointer text-center ${
-                                complianceFilter === "all"
-                                  ? "bg-indigo-600 text-white border-indigo-500 shadow-md"
-                                  : "bg-slate-950 text-slate-400 border-slate-800 hover:text-white"
-                              }`}
-                            >
-                              All ({overallStats.totalRecords})
-                            </button>
-                            <button
-                              onClick={() => setComplianceFilter("complete")}
-                              className={`py-1.5 text-[10px] font-bold rounded-lg border transition-all cursor-pointer text-center ${
-                                complianceFilter === "complete"
-                                  ? "bg-emerald-600 text-white border-emerald-500 shadow-md"
-                                  : "bg-slate-950 text-slate-400 border-slate-800 hover:text-white"
-                              }`}
-                            >
-                              Ready ({overallStats.completeRecords})
-                            </button>
-                            <button
-                              onClick={() => setComplianceFilter("incomplete")}
-                              className={`py-1.5 text-[10px] font-bold rounded-lg border transition-all cursor-pointer text-center ${
-                                complianceFilter === "incomplete"
-                                  ? "bg-rose-600 text-white border-rose-500 shadow-md"
-                                  : "bg-slate-950 text-slate-400 border-slate-800 hover:text-white"
-                              }`}
-                            >
-                              Pending ({overallStats.incompleteRecords})
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Apply Trigger */}
-                        <button
-                          onClick={() => setActiveTab("records")}
-                          className="w-full bg-indigo-600 hover:bg-indigo-500 active:scale-95 transition-all text-white py-2.5 rounded-xl text-xs font-bold shadow-md cursor-pointer flex items-center justify-center gap-1.5"
-                        >
-                          <span>Apply & View {filteredRecords.length} Items</span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Active Records Feed Tab */}
-                  {activeTab === "records" && (
-                    <div className="space-y-4 animate-in fade-in duration-200">
-                      <div className="flex items-center justify-between gap-2 bg-slate-900/60 p-2 rounded-xl border border-slate-850">
-                        <div className="relative flex-1">
-                          <Search className="absolute left-2.5 top-2.5 w-3.5 h-3.5 text-slate-500" />
-                          <input
-                            type="text"
-                            placeholder="Search in stream..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full text-xs bg-slate-950 border border-slate-800 rounded-lg pl-8 pr-2 py-1.5 text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-                          />
-                        </div>
-                        <button
-                          onClick={handleDownloadCSV}
-                          disabled={filteredRecords.length === 0}
-                          className="px-2.5 py-1.5 rounded-lg text-[10px] font-bold bg-emerald-600 disabled:bg-slate-800 disabled:text-slate-500 hover:bg-emerald-500 text-white shadow-md cursor-pointer shrink-0"
-                          title="Export CSV"
-                        >
-                          CSV
-                        </button>
-                      </div>
-
-                      <RecordList records={filteredRecords} isLoading={isLoading} isCompact={true} />
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-
-            {/* Mobile Native Navigation Tab Bar */}
-            <div className="bg-slate-900 border-t border-slate-850 px-4 py-2 flex items-center justify-around shrink-0 select-none pb-6 lg:pb-3.5 z-10">
-              <button
-                onClick={() => setActiveTab("summary")}
-                className={`flex flex-col items-center gap-1 py-1 transition-all cursor-pointer ${
-                  activeTab === "summary" ? "text-indigo-400" : "text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                <LayoutDashboard className="w-5 h-5" />
-                <span className="text-[9px] font-black uppercase tracking-wider">KPIs</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab("charts")}
-                className={`flex flex-col items-center gap-1 py-1 transition-all cursor-pointer ${
-                  activeTab === "charts" ? "text-indigo-400" : "text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                <BarChart3 className="w-5 h-5" />
-                <span className="text-[9px] font-black uppercase tracking-wider">Trends</span>
-              </button>
-
-              <button
-                onClick={() => setActiveTab("filters")}
-                className={`flex flex-col items-center gap-1 py-1 transition-all relative cursor-pointer ${
-                  activeTab === "filters" ? "text-indigo-400" : "text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                <SlidersHorizontal className="w-5 h-5" />
-                <span className="text-[9px] font-black uppercase tracking-wider">Filters</span>
-                {(selectedDate || selectedCourse || selectedSubject || selectedCoordinator || complianceFilter !== "all" || searchQuery) && (
-                  <span className="absolute top-1 right-2.5 w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
-                )}
-              </button>
-
-              <button
-                onClick={() => setActiveTab("records")}
-                className={`flex flex-col items-center gap-1 py-1 transition-all relative cursor-pointer ${
-                  activeTab === "records" ? "text-indigo-400" : "text-slate-400 hover:text-slate-200"
-                }`}
-              >
-                <ListChecks className="w-5 h-5" />
-                <span className="text-[9px] font-black uppercase tracking-wider">Feed</span>
-                <span className="absolute -top-1 -right-2 px-1.5 py-0.5 text-[8px] font-black text-white bg-indigo-600 rounded-full scale-90 border border-slate-900 shadow-sm">
-                  {filteredRecords.length}
-                </span>
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
 
       {/* 3. Humble footer showing workspace metadata */}
-      <footer className={`bg-slate-950 border-t border-slate-900/80 py-8 mt-12 text-center ${layoutMode === "mobile" ? "hidden" : ""}`} id="main-footer">
+      <footer className="bg-slate-950 border-t border-slate-900/80 py-8 mt-12 text-center" id="main-footer">
         <p className="text-xs text-slate-500 flex items-center justify-center gap-2">
           <Database className="w-4 h-4 text-slate-600" />
           <span>Connected Google Sheet: <strong className="font-semibold text-slate-400 font-mono">13H2FFJ8WzKbis-Ud9SXlea9NNTM6exnOaguML8MVZI4</strong></span>
