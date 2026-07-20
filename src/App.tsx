@@ -131,7 +131,16 @@ export default function App() {
 
   // Handle Multi-Filter logic
   const filteredRecords = useMemo(() => {
-    return records.filter(record => {
+    const isFiltered = !!(
+      searchQuery.trim().length > 0 ||
+      selectedDate ||
+      selectedCourse ||
+      selectedSubject ||
+      selectedCoordinator ||
+      complianceFilter !== "all"
+    );
+
+    const filtered = records.filter(record => {
       // 1. Search Query
       if (searchQuery.trim().length > 0) {
         const query = searchQuery.toLowerCase();
@@ -167,6 +176,11 @@ export default function App() {
 
       return true;
     });
+
+    if (isFiltered) {
+      return filtered.slice(0, 50);
+    }
+    return filtered;
   }, [records, searchQuery, selectedDate, selectedCourse, selectedSubject, selectedCoordinator, complianceFilter]);
 
   // Filtered stats for local metrics display

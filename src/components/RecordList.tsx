@@ -28,7 +28,7 @@ interface RecordListProps {
 export default function RecordList({ records, isLoading, isCompact = false }: RecordListProps) {
   const [viewMode, setViewMode] = useState<"grid" | "table">(isCompact ? "grid" : "grid");
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(isCompact ? 5 : 10);
+  const [itemsPerPage, setItemsPerPage] = useState(50);
 
   // Pagination calculations
   const totalItems = records.length;
@@ -88,26 +88,6 @@ export default function RecordList({ records, isLoading, isCompact = false }: Re
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Items per page selector */}
-          <div className="flex items-center gap-1">
-            <span className="text-[10px] text-slate-400">Size:</span>
-            <select
-              value={itemsPerPage}
-              onChange={(e) => {
-                setItemsPerPage(Number(e.target.value));
-                setCurrentPage(1);
-              }}
-              className={`${isCompact ? "text-[10px] py-0.5 px-1.5" : "text-xs py-1 px-2"} bg-slate-950/50 border border-slate-800 rounded-lg text-slate-300 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:bg-slate-950`}
-            >
-              <option value={5}>5</option>
-              <option value={10}>10</option>
-              <option value={25}>25</option>
-              {!isCompact && <option value={50}>50</option>}
-            </select>
-          </div>
-
-          <div className="h-4 w-px bg-slate-800 mx-1" />
-
           {/* Grid vs Table view toggle */}
           <div className="bg-slate-950/50 p-0.5 rounded-lg flex gap-0.5 border border-slate-800/80">
             <button
