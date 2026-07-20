@@ -50,7 +50,7 @@ export default function MetricCharts({ stats, isCompact = false }: MetricChartsP
   return (
     <div className={`grid ${isCompact ? "grid-cols-1 gap-4" : "grid-cols-1 lg:grid-cols-12 gap-6"}`} id="dashboard-charts-container">
       {/* Chart 1: Key Columns Completeness Index */}
-      <div className={`${isCompact ? "" : "lg:col-span-6"} bg-slate-900/30 backdrop-blur-xs rounded-2xl border border-slate-800 shadow-2xl flex flex-col ${isCompact ? "p-3" : "p-4 sm:p-6"}`} id="column-completeness-chart-card">
+      <div className={`${isCompact ? "" : "lg:col-span-4"} bg-slate-900/30 backdrop-blur-xs rounded-2xl border border-slate-800 shadow-2xl flex flex-col ${isCompact ? "p-3" : "p-4 sm:p-6"}`} id="column-completeness-chart-card">
         <div className={`flex items-center justify-between ${isCompact ? "mb-3" : "mb-6"}`}>
           <div>
             <h4 className={`${isCompact ? "text-xs" : "text-sm"} font-semibold text-white flex items-center gap-2`}>
@@ -153,7 +153,7 @@ export default function MetricCharts({ stats, isCompact = false }: MetricChartsP
       </div>
 
       {/* Chart 2: Day-Wise Operational Compliance Trend */}
-      <div className={`${isCompact ? "" : "lg:col-span-6"} bg-slate-900/30 backdrop-blur-xs rounded-2xl border border-slate-800 shadow-2xl flex flex-col ${isCompact ? "p-3" : "p-4 sm:p-6"}`} id="day-wise-trend-chart-card">
+      <div className={`${isCompact ? "" : "lg:col-span-8"} bg-slate-900/30 backdrop-blur-xs rounded-2xl border border-slate-800 shadow-2xl flex flex-col ${isCompact ? "p-3" : "p-4 sm:p-6"}`} id="day-wise-trend-chart-card">
         <div className={`flex items-center justify-between ${isCompact ? "mb-3" : "mb-6"}`}>
           <div>
             <h4 className={`${isCompact ? "text-xs" : "text-sm"} font-semibold text-white flex items-center gap-2`}>
