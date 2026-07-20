@@ -44,7 +44,7 @@ export default function App() {
 
   // Logo States (Uploadable and Customisable)
   const [brandLogo, setBrandLogo] = useState<string>(() => {
-    return localStorage.getItem("brand_logo") || "https://upload.wikimedia.org/wikipedia/commons/3/3a/10_Minute_School_Logo.png";
+    return localStorage.getItem("brand_logo") || "/10ms_logo.svg";
   });
   const [showLogoModal, setShowLogoModal] = useState(false);
   const [logoInputUrl, setLogoInputUrl] = useState("");
@@ -291,7 +291,7 @@ export default function App() {
   };
 
   const handleLogoReset = () => {
-    const defaultLogo = "https://upload.wikimedia.org/wikipedia/commons/3/3a/10_Minute_School_Logo.png";
+    const defaultLogo = "/10ms_logo.svg";
     setBrandLogo(defaultLogo);
     localStorage.removeItem("brand_logo");
     setLogoInputUrl("");
@@ -348,26 +348,33 @@ export default function App() {
 
           <div className="flex flex-row items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-start">
             {/* Real-time Bangladesh Clock */}
-            <div className="flex items-center justify-center gap-1.5 text-[10px] sm:text-xs text-indigo-300 font-mono bg-slate-900 border border-slate-800 px-2.5 py-1.5 rounded-xl shadow-inner flex-1 sm:flex-none sm:w-auto" id="realtime-bd-clock">
-              <Clock className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-indigo-400 animate-pulse" />
-              <span className="font-semibold whitespace-nowrap">Time: {bdTime || "..."}</span>
-            </div>
-
-            {lastSynced && (
-              <div className="hidden md:flex items-center gap-1.5 text-xs text-slate-400 font-mono bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/50">
-                <Clock className="w-3.5 h-3.5 text-indigo-400" />
-                <span>Synced: {lastSynced.toLocaleTimeString()}</span>
+            <div className="flex items-center justify-start gap-2.5 text-indigo-300 bg-slate-950/85 border border-indigo-500/20 hover:border-indigo-500/40 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl shadow-[0_0_12px_rgba(99,102,241,0.08)] transition-all duration-300 flex-1 sm:flex-none" id="realtime-bd-clock">
+              <div className="relative flex items-center justify-center">
+                <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-400 animate-pulse relative z-10" />
+                <span className="absolute w-full h-full rounded-full bg-indigo-500/10 animate-ping opacity-40"></span>
               </div>
-            )}
+              <div className="flex flex-col items-start leading-none">
+                <span className="text-[7.5px] sm:text-[9px] uppercase tracking-widest text-indigo-400/90 font-black mb-0.5">TIME</span>
+                <span className="font-black text-white font-mono text-xs sm:text-sm md:text-base tracking-wider whitespace-nowrap">{bdTime || "..."}</span>
+              </div>
+            </div>
 
             <button
               onClick={() => fetchData(true)}
               disabled={isLoading || isRefreshing}
-              className="flex items-center justify-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 text-white px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-[10px] sm:text-xs font-semibold shadow-md transition-all duration-200 active:scale-95 flex-1 sm:flex-none sm:w-auto cursor-pointer"
+              className="flex flex-col items-start justify-center bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 text-white px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg shadow-sm transition-all duration-200 active:scale-95 flex-1 sm:flex-none sm:w-auto cursor-pointer border border-indigo-500/15"
               id="sync-now-button"
             >
-              <RefreshCw className={`w-3 h-3 sm:w-3.5 sm:h-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
-              <span className="whitespace-nowrap">{isRefreshing ? "Syncing..." : "Sync Live Sheet"}</span>
+              <div className="flex items-center gap-1">
+                <RefreshCw className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${isRefreshing ? "animate-spin" : ""}`} />
+                <span className="text-[9px] sm:text-[11px] font-bold whitespace-nowrap">{isRefreshing ? "Syncing..." : "Sync Live Sheet"}</span>
+              </div>
+              {lastSynced && (
+                <div className="text-[7.5px] sm:text-[8px] text-indigo-200 font-mono flex items-center gap-0.5 mt-0.5 whitespace-nowrap">
+                  <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse inline-block"></span>
+                  <span>Synced: {lastSynced.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
+                </div>
+              )}
             </button>
           </div>
         </div>
