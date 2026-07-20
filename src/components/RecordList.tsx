@@ -328,13 +328,13 @@ export default function RecordList({ records, isLoading, isCompact = false }: Re
                       <div className={`text-slate-100 font-semibold leading-tight ${isCompact ? "text-[9px]" : "text-xs"}`}>
                         {record.course}
                       </div>
-                      <div className={`${isCompact ? "text-[7.5px]" : "text-[10px]"} text-slate-400 font-mono mt-0.5 flex flex-wrap items-center gap-x-1 gap-y-0.5`}>
+                      <div className={`${isCompact ? "text-[8.5px]" : "text-[11px]"} text-slate-400 font-mono mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5`}>
                         <span className="flex items-center gap-0.5 shrink-0">
                           <Calendar className={`${isCompact ? "w-2.5 h-2.5" : "w-3 h-3"} text-slate-555`} />
                           {record.dateTime}
                         </span>
                         {record.classTime && (
-                          <span className="flex items-center gap-0.5 text-indigo-400 font-bold shrink-0">
+                          <span className={`flex items-center gap-0.5 text-indigo-400 font-bold shrink-0 ${isCompact ? "text-[9.5px]" : "text-[12.5px]"}`}>
                             <Clock className={`${isCompact ? "w-2.5 h-2.5" : "w-3.5 h-3.5"} text-indigo-500`} />
                             {record.classTime}
                           </span>
