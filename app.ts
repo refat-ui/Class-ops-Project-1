@@ -121,8 +121,13 @@ async function getSheetNameFromGid(sheets: any, spreadsheetId: string, gid: numb
   return sheetsList[0]?.properties?.title || "Sheet1";
 }
 
-// Logging Middleware for debugging Vercel path routing
+// Logging and normalization Middleware for debugging and fixing Vercel path routing
 app.use((req, res, next) => {
+  const matchedPath = req.headers["x-matched-path"] as string;
+  if (matchedPath && req.url !== matchedPath) {
+    console.log(`[Vercel Route Normalizer] Restoring req.url from ${req.url} to matchedPath: ${matchedPath}`);
+    req.url = matchedPath;
+  }
   console.log(`[Express] Incoming request: ${req.method} ${req.url} (Path: ${req.path})`);
   next();
 });
