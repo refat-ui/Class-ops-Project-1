@@ -44,7 +44,12 @@ export default function App() {
 
   // Logo States (Uploadable and Customisable)
   const [brandLogo, setBrandLogo] = useState<string>(() => {
-    return localStorage.getItem("brand_logo") || "/10ms_logo.svg";
+    const saved = localStorage.getItem("brand_logo");
+    // If it is the old broken wikimedia url, placeholder, or empty, fallback to the local svg asset
+    if (!saved || saved.includes("wikimedia.org") || saved.includes("10_Minute_School_Logo")) {
+      return "/10ms_logo.svg";
+    }
+    return saved;
   });
   const [showLogoModal, setShowLogoModal] = useState(false);
   const [logoInputUrl, setLogoInputUrl] = useState("");
@@ -314,6 +319,16 @@ export default function App() {
                   alt="10MS Brand Logo"
                   className="h-12 w-auto object-contain"
                   referrerPolicy="no-referrer"
+                  onError={(e) => {
+                    // Fallback to local SVG if the stored image is broken
+                    if (brandLogo !== "/10ms_logo.svg") {
+                      setBrandLogo("/10ms_logo.svg");
+                      localStorage.setItem("brand_logo", "/10ms_logo.svg");
+                    } else {
+                      // If local SVG also fails, clear the logo to use the text fallback
+                      setBrandLogo("");
+                    }
+                  }}
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center text-center h-12 px-2">
